@@ -1,9 +1,10 @@
 const conversation = require("../models/conversation");
+const { verifyToken } = require("./verification");
 const router = require("express").Router();
 
 //* New conversations
 
-router.post("/", async (req, res) => {
+router.post("/", verifyToken, async (req, res) => {
   const newConversation = new conversation({
     members: [req.body.senderId, req.body.receiverId],
   });
@@ -17,8 +18,7 @@ router.post("/", async (req, res) => {
 });
 
 //* Conversations by user
-
-router.get("/:userId", async (req, res) => {
+router.get("/:userId", verifyToken, async (req, res) => {
   try {
     console.log(req.params.userId);
     const foundConversation = await conversation.find({
@@ -31,16 +31,19 @@ router.get("/:userId", async (req, res) => {
 });
 
 //* Conversations between two users
-
-router.get("/find/:firstUserId/:secondUserId", async (req, res) => {
-  try {
-    const foundConversations = await conversation.findOne({
-      members: { $all: [req.params.firstUserId, req.params.secondUserId] },
-    });
-    return res.status(200).json(foundConversations);
-  } catch (error) {
-    return res.status(500).json(error);
+router.get(
+  "/find/:firstUserId/:secondUserId",
+  verifyToken,
+  async (req, res) => {
+    try {
+      const foundConversations = await conversation.findOne({
+        members: { $all: [req.params.firstUserId, req.params.secondUserId] },
+      });
+      return res.status(200).json(foundConversations);
+    } catch (error) {
+      return res.status(500).json(error);
+    }
   }
-});
+);
 
 module.exports = router;
