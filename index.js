@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 const authRouter = require("./routes/auth");
 const conversationRouter = require("./routes/conversation");
 const messageRouter = require("./routes/message");
+const userRouter = require("./routes/users");
 
 const dotenv = require("dotenv");
 const cors = require("cors");
@@ -26,6 +27,7 @@ app.use(cors());
 app.use("/api/auth", authRouter);
 app.use("/api/conversations", conversationRouter);
 app.use("/api/message", messageRouter);
+app.use("/api/users", userRouter);
 
 //?----------------APP RUNNING---------------
 app.listen(8080, () => {
