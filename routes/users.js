@@ -15,11 +15,11 @@ router.get("/find", async (req, res) => {
   const username = req.query.username;
 
   try {
-    let user;
-    userId
+    let User = userId
       ? await user.findById(userId)
       : await user.findOne({ username: username });
-    const { password, updatedAt, ...other } = user?._doc;
+    const { password, updatedAt, ...other } = User?._doc;
+
     res.status(200).json(other);
   } catch (error) {
     res.status(500).json(error);
