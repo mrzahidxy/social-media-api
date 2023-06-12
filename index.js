@@ -9,7 +9,6 @@ const userRouter = require("./routes/users");
 const dotenv = require("dotenv");
 const cors = require("cors");
 
-
 dotenv.config();
 const app = express();
 app.use(express.json());
@@ -23,8 +22,6 @@ mongoose
   .then(() => console.log("Database Is Connetced!"))
   .catch((error) => console.log(error));
 
-
-
 //*----------ROUTES--------------
 app.use("/api/auth", authRouter);
 app.use("/api/conversations", conversationRouter);
@@ -36,13 +33,14 @@ app.listen(8080, () => {
   console.log("Backened Server Is Running!");
 });
 
-
 const io = require("socket.io")(8900, {
   cors: {
-    origin: "http://localhost:5173/",
+    origin: "http://localhost:5173",
+    methods: ["GET", "POST"],
+    allowedHeaders: ["my-custom-header"],
+    credentials: true,
   },
 });
-
 
 let users = [];
 
@@ -51,18 +49,7 @@ const addUser = (userId, socketId) => {
     users.push({ userId, socketId });
 };
 
-const removeUser = (socketId) => {
-  users = users.filter((user) => user.socketId !== socketId);
-};
-
-const getUser = (userId) => {
-  return users.find((user) => user.userId === userId);
-};
-
 io.on("connection", (socket) => {
-  console.log("User connected");
-  io.emit("welcome", "welcome to socket server!!");
-
   socket.on("addUser", (userId) => {
     addUser(userId, socket.id);
     io.emit("getUsers", users);
