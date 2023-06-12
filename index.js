@@ -49,9 +49,20 @@ const addUser = (userId, socketId) => {
     users.push({ userId, socketId });
 };
 
+const removeUser = (socketId) => {
+  users = users.filter((user) => user.socketId !== socketId);
+};
+
+//when connect
 io.on("connection", (socket) => {
+  //when disconnect
   socket.on("addUser", (userId) => {
     addUser(userId, socket.id);
     io.emit("getUsers", users);
+  });
+
+  //when disconnect
+  socket.on("disconnect", () => {
+    removeUser(socket.id);
   });
 });
